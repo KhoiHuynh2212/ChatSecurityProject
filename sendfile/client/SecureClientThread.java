@@ -16,10 +16,10 @@ import javax.swing.SwingUtilities;
  */
 public class SecureClientThread implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
     private DataInputStream dis;
-    private SecureMainForm main;
-    private CryptoManager cryptoManager;
+    private final SecureMainForm main;
+    private final CryptoManager cryptoManager;
     private StringTokenizer st;
 
     public SecureClientThread(Socket socket, SecureMainForm main, CryptoManager cryptoManager) {
@@ -39,7 +39,7 @@ public class SecureClientThread implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 String data = dis.readUTF();
-                System.out.println("[DEBUG] Received: " + data);
+                System.out.println("Received: " + data);
 
                 st = new StringTokenizer(data);
                 String CMD = st.nextToken();
@@ -62,7 +62,7 @@ public class SecureClientThread implements Runnable {
                         break;
 
                     default:
-                        System.out.println("[DEBUG] Unknown command: " + CMD);
+                        System.out.println("Unknown command: " + CMD);
                         SwingUtilities.invokeLater(() -> {
                             main.appendMessage("[Unknown Command]: " + CMD, "System", Color.ORANGE, Color.ORANGE);
                         });
@@ -70,7 +70,7 @@ public class SecureClientThread implements Runnable {
                 }
             }
         } catch (IOException e) {
-            System.err.println("[DEBUG] Connection error: " + e.getMessage());
+            System.err.println("Connection error: " + e.getMessage());
             SwingUtilities.invokeLater(() -> {
                 main.appendMessage("Connection lost to server!", "Error", Color.RED, Color.RED);
             });
@@ -89,7 +89,7 @@ public class SecureClientThread implements Runnable {
 
         String finalMsg = msg;
         SwingUtilities.invokeLater(() -> {
-            main.appendMessage("" + finalMsg +" (UNENCRYPTED)", from, Color.ORANGE, Color.ORANGE);
+            main.appendMessage(" " + finalMsg +" (UNENCRYPTED)", from, Color.ORANGE, Color.ORANGE);
         });
     }
 
@@ -98,24 +98,24 @@ public class SecureClientThread implements Runnable {
      */
     private void handleEncryptedMessage() {
         try {
-            System.out.println("[DEBUG] Processing encrypted message");
+            System.out.println("Processing encrypted message");
 
             String from = st.nextToken();
             String encryptedMsg = st.nextToken();
             String mac = st.nextToken();
 
-            System.out.println("[DEBUG] From: " + from + ", Encrypted: " + encryptedMsg.substring(0, Math.min(20, encryptedMsg.length())) + "...");
+            System.out.println("From: " + from + ", Encrypted: " + encryptedMsg.substring(0, Math.min(20, encryptedMsg.length())) + "...");
 
             // Decrypt message
             String decryptedMsg = cryptoManager.decrypt(encryptedMsg);
-            System.out.println("[DEBUG] Decrypted: " + decryptedMsg);
+            System.out.println("Decrypted: " + decryptedMsg);
 
             // Verify MAC for message integrity
             if (cryptoManager.verifyMAC(decryptedMsg, mac)) {
                 // Use SwingUtilities.invokeLater for GUI updates
                 SwingUtilities.invokeLater(() -> {
                     try {
-                        System.out.println("[DEBUG] Updating GUI with message: " + decryptedMsg);
+                        System.out.println(" Updating GUI with message: " + decryptedMsg);
 
                         // Display the message in GUI
                         if (main.shouldShowCiphertext()) {
@@ -125,10 +125,8 @@ public class SecureClientThread implements Runnable {
                             main.appendMessage(" " + decryptedMsg, from + " ", Color.MAGENTA, Color.BLUE);
                         }
 
-                        System.out.println("[DEBUG] Message successfully displayed in GUI");
 
                     } catch (Exception e) {
-                        System.err.println("[DEBUG] GUI update error: " + e.getMessage());
                         e.printStackTrace();
                     }
                 });
@@ -142,7 +140,6 @@ public class SecureClientThread implements Runnable {
             }
 
         } catch (Exception e) {
-            System.err.println("[DEBUG] Decryption error: " + e.getMessage());
             e.printStackTrace();
 
             // Show error in GUI

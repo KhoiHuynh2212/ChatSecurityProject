@@ -16,9 +16,9 @@ import java.net.Socket;
  */
 public class OnlineListThread implements Runnable {
 
-    MainForm main;
+    ServerForm main;
 
-    public OnlineListThread(MainForm main){
+    public OnlineListThread(ServerForm main){
         this.main = main;
     }
 
@@ -35,7 +35,7 @@ public class OnlineListThread implements Runnable {
                     Socket tsoc = (Socket) main.socketList.elementAt(x);
                     DataOutputStream dos = new DataOutputStream(tsoc.getOutputStream());
                     /** CMD_ONLINE [user1] [user2] [user3] **/
-                    if(msg.length() > 0){
+                    if(!msg.isEmpty()){
                         dos.writeUTF("CMD_ONLINE "+ msg);
                     }
                 }

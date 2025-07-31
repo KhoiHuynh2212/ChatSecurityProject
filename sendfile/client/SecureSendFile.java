@@ -18,8 +18,6 @@ public class SecureSendFile extends javax.swing.JFrame {
     private DataInputStream dis;
     private DataOutputStream dos;
     private String myusername;
-    private String host;
-    private int port;
     private StringTokenizer st;
     private String sendTo;
     private String file;
@@ -36,17 +34,18 @@ public class SecureSendFile extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkEncryptFile;
 
     public SecureSendFile() {
-        initComponents();
+        // Don't call initComponents() here - wait until prepare() is called
         setLocationRelativeTo(null);
-        progressbar.setVisible(false);
     }
 
     public boolean prepare(String username, String host, int port, SecureMainForm main, CryptoManager cryptoManager) {
-        this.host = host;
         this.myusername = username;
-        this.port = port;
         this.main = main;
         this.cryptoManager = cryptoManager;
+
+        // Now initialize components after cryptoManager is set
+        initComponents();
+        progressbar.setVisible(false);
 
         try {
             socket = new Socket(host, port);
@@ -72,7 +71,7 @@ public class SecureSendFile extends javax.swing.JFrame {
         setResizable(false);
 
         // Create components
-        JLabel lblTitle = new JLabel(" Encrypted File Transfer");
+        JLabel lblTitle = new JLabel("Encrypted File Transfer");
         lblTitle.setFont(new Font("Arial", Font.BOLD, 16));
         lblTitle.setForeground(new Color(25, 25, 112));
 
@@ -96,7 +95,9 @@ public class SecureSendFile extends javax.swing.JFrame {
         chkEncryptFile.setForeground(new Color(0, 100, 0));
         chkEncryptFile.setEnabled(false); // Always encrypt in secure mode
 
-        lblEncryptionStatus = new JLabel("File will be encrypted with " + cryptoManager.getKeyInfo());
+        // Safe access to cryptoManager
+        String keyInfo = (cryptoManager != null) ? cryptoManager.getKeyInfo() : "Encryption Pending";
+        lblEncryptionStatus = new JLabel("File will be encrypted with " + keyInfo);
         lblEncryptionStatus.setFont(new Font("Arial", Font.ITALIC, 10));
         lblEncryptionStatus.setForeground(new Color(0, 128, 0));
 
@@ -173,7 +174,8 @@ public class SecureSendFile extends javax.swing.JFrame {
             // Show file size and estimated encryption time
             long fileSize = selectedFile.length();
             String sizeInfo = String.format("File size: %.2f KB", fileSize / 1024.0);
-            lblEncryptionStatus.setText(" " + sizeInfo + " | Will be encrypted with " + cryptoManager.getKeyInfo());
+            String keyInfo = (cryptoManager != null) ? cryptoManager.getKeyInfo() : "Encryption Ready";
+            lblEncryptionStatus.setText(sizeInfo + " | Will be encrypted with " + keyInfo);
         } else {
             txtFile.setText("");
         }
@@ -197,12 +199,13 @@ public class SecureSendFile extends javax.swing.JFrame {
         }
 
         // Confirm encryption
+        String keyInfo = (cryptoManager != null) ? cryptoManager.getKeyInfo() : "Encryption Ready";
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Secure File Transfer Confirmation\n\n" +
                         "File: " + fileObj.getName() + "\n" +
                         "Size: " + String.format("%.2f KB", fileObj.length() / 1024.0) + "\n" +
                         "Recipient: " + sendTo + "\n" +
-                        "Encryption: " + cryptoManager.getKeyInfo() + "\n\n" +
+                        "Encryption: " + keyInfo + "\n\n" +
                         "The file will be encrypted before sending.\n" +
                         "Continue with secure transfer?",
                 "Confirm Secure Transfer",
@@ -293,41 +296,7 @@ public class SecureSendFile extends javax.swing.JFrame {
     public void updateProgress(int value) {
         progressbar.setValue(value);
     }
-
-    /**
-     * Get crypto manager
-     */
-    public CryptoManager getCryptoManager() {
-        return cryptoManager;
-    }
-
-    /**
-     * Get selected file path
-     */
-    public String getSelectedFile() {
-        return file;
-    }
-
-    /**
-     * Get recipient
-     */
-    public String getRecipient() {
-        return sendTo;
-    }
-
-    /**
-     * Get username
-     */
-    public String getUsername() {
-        return myusername;
-    }
-
-    /**
-     * Get socket
-     */
-    public Socket getSocket() {
-        return socket;
-    }
+    
 
     /**
      * Inner class for handling secure file transfer responses
@@ -388,10 +357,10 @@ public class SecureSendFile extends javax.swing.JFrame {
                             }
                             System.err.println("Send file error: " + sendErrorMsg);
                             JOptionPane.showMessageDialog(SecureSendFile.this,
-                                    " " + sendErrorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+                                    sendErrorMsg, "Error", JOptionPane.ERROR_MESSAGE);
                             form.updateAttachment(false);
                             form.disableGUI(false);
-                            form.updateBtn(" Send Encrypted File");
+                            form.updateBtn("Send Encrypted File");
                             break;
 
                         case "CMD_SENDFILERESPONSE":
@@ -402,7 +371,7 @@ public class SecureSendFile extends javax.swing.JFrame {
                             }
                             form.updateAttachment(false);
                             JOptionPane.showMessageDialog(SecureSendFile.this,
-                                    "📨 " + responseMsg, "Transfer Response", JOptionPane.INFORMATION_MESSAGE);
+                                    responseMsg, "Transfer Response", JOptionPane.INFORMATION_MESSAGE);
                             dispose();
                             break;
 

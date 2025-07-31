@@ -11,10 +11,10 @@ import java.net.Socket;
 public class ServerThread implements Runnable {
 
     ServerSocket server;
-    MainForm main;  // Uses your existing MainForm
+    ServerForm main;  // Uses your existing MainForm
     boolean keepGoing = true;
 
-    public ServerThread(int port, MainForm main) {
+    public ServerThread(int port, ServerForm main) {
         this.main = main;
         main.appendMessage("[Secure Server]: Initializing on port " + port);
 

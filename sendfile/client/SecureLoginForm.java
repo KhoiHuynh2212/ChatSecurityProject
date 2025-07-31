@@ -49,7 +49,7 @@ public class SecureLoginForm extends javax.swing.JFrame {
             if (chkShowPassword.isSelected()) {
                 txtPassword.setEchoChar((char) 0);
             } else {
-                txtPassword.setEchoChar('*');
+                txtPassword.setEchoChar('•');
             }
         });
 
@@ -86,9 +86,9 @@ public class SecureLoginForm extends javax.swing.JFrame {
         securityInfo.setBorder(BorderFactory.createTitledBorder("Security Information"));
         securityInfo.setBackground(new Color(255, 255, 240));
 
-        JLabel info1 = new JLabel("• All messages are encrypted end-to-end");
-        JLabel info2 = new JLabel("• Password is used to derive encryption key");
-        JLabel info3 = new JLabel("• Choose AES-128 for better security");
+        JLabel info1 = new JLabel("All messages are encrypted end-to-end");
+        JLabel info2 = new JLabel("Password is used to derive encryption key");
+        JLabel info3 = new JLabel("Choose AES-128 for better security");
 
         info1.setFont(new Font("Arial", Font.PLAIN, 10));
         info2.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -198,13 +198,13 @@ public class SecureLoginForm extends javax.swing.JFrame {
             CryptoManager.KeySize keySize = cmbKeySize.getSelectedIndex() == 0 ?
                     CryptoManager.KeySize.BITS_56 : CryptoManager.KeySize.BITS_128;
 
-            lblStatus.setText("🔄 Initializing encryption...");
+            lblStatus.setText("Initializing encryption...");
             btnLogin.setEnabled(false);
 
             // Create crypto manager
             CryptoManager cryptoManager = new CryptoManager(password, keySize);
 
-            lblStatus.setText("🌐 Connecting to server...");
+            lblStatus.setText("Connecting to server...");
 
             // Create secure main form
             SecureMainForm mainForm = new SecureMainForm();

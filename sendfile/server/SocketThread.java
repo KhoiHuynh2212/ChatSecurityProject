@@ -21,14 +21,14 @@ import java.util.StringTokenizer;
 public class SocketThread implements Runnable {
 
     Socket socket;
-    MainForm main;
+    ServerForm main;
     DataInputStream dis;
     StringTokenizer st;
     String client, filesharing_username;
 
     private final int BUFFER_SIZE = 8192; // Increased from 100 for better performance
 
-    public SocketThread(Socket socket, MainForm main) {
+    public SocketThread(Socket socket, ServerForm main) {
         this.main = main;
         this.socket = socket;
 

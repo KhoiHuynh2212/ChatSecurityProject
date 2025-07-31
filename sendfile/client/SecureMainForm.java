@@ -1,14 +1,12 @@
 package sendfile.client;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.*;
-import javax.swing.border.Border;
 /**
  * Secure main form with integrated encryption display
  */
@@ -21,7 +19,7 @@ public class SecureMainForm extends javax.swing.JFrame {
     private DataOutputStream dos;
     private CryptoManager cryptoManager;
     private boolean isConnected = false;
-    private String mydownloadfolder = "D:\\";
+    private String mydownloadfolder = "C:\\";
     private boolean attachmentOpen = false;
 
     // GUI Components
@@ -59,7 +57,7 @@ public class SecureMainForm extends javax.swing.JFrame {
         txtpane2 = new JTextPane();
         lblEncryptionInfo = new JLabel();
         chkShowCiphertext = new JCheckBox("Show Ciphertext");
-        btnKeyInfo = new JButton("🔑 Key Info");
+        btnKeyInfo = new JButton("Key Info");
         encryptionProgress = new JProgressBar();
 
         // Configure main chat area
@@ -99,7 +97,7 @@ public class SecureMainForm extends javax.swing.JFrame {
 
         // Configure online users panel
         txtpane2.setEditable(false);
-        txtpane2.setFont(new Font("Tahoma", Font.BOLD, 9));
+        txtpane2.setFont(new Font("Tahoma", Font.BOLD, 13));
         txtpane2.setForeground(new Color(120, 14, 3));
         txtpane2.setBackground(new Color(255, 255, 240));
 
@@ -166,7 +164,7 @@ public class SecureMainForm extends javax.swing.JFrame {
         // Online users panel
         JPanel onlinePanel = new JPanel(new BorderLayout());
         JLabel onlineLabel = new JLabel("Online Users (Encrypted)");
-        onlineLabel.setFont(new Font("Arial", Font.BOLD, 11));
+        onlineLabel.setFont(new Font("Arial", Font.BOLD, 15));
         onlineLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         onlinePanel.add(onlineLabel, BorderLayout.NORTH);
 

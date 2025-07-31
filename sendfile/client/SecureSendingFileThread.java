@@ -5,9 +5,7 @@ import java.net.Socket;
 import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
 
-/**
- * Thread for sending encrypted files
- */
+
 public class SecureSendingFileThread implements Runnable {
 
     protected Socket socket;
@@ -124,14 +122,11 @@ public class SecureSendingFileThread implements Runnable {
             String errorMsg = "Secure file transfer failed: " + e.getMessage();
             JOptionPane.showMessageDialog(form, errorMsg, "Transfer Error", JOptionPane.ERROR_MESSAGE);
 
-            System.err.println("Secure file transfer error: " + e.getMessage());
             e.printStackTrace();
 
         } finally {
             // Clean up resources
             try {
-                if (bis != null) bis.close();
-                if (fis != null) fis.close();
                 if (output != null) output.close();
             } catch (IOException e) {
                 System.err.println("Error closing resources: " + e.getMessage());
